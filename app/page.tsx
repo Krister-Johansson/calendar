@@ -1,6 +1,12 @@
+'use client';
+
+import { CalendarBoard } from '../component/CalendarBoard';
+import { CalendarProvider } from '../contexts/CalendarContext';
 
 export default function Home() {
   return (
-   <h1>Hello World</h1>
+    <CalendarProvider>
+      <CalendarBoard />
+    </CalendarProvider>
   );
 }
