@@ -9,6 +9,10 @@ const CalendarBoardFooter = () => {
         <div className="w-3 h-3 md:w-4 md:h-4 bg-gray-100 border border-gray-300 rounded"></div>
         <span className="text-gray-600">Booked</span>
       </div>
+      <div className="flex items-center gap-2">
+        <div className="w-3 h-3 md:w-4 md:h-4 bg-red-100 border border-red-200 rounded"></div>
+        <span className="text-gray-600">Unavailable</span>
+      </div>
     </footer>
   );
 };

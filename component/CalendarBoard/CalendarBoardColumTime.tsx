@@ -3,27 +3,24 @@ import { cn } from '../../lib/utils';
 import CalendarBoardColumTimeSlot, {
   type TimeSlot,
 } from './CalendarBoardColumTimeSlot';
+import { useCalendarContext } from '../../contexts/CalendarContext';
 
 interface CalendarBoardColumTimeProps {
   date: DateTime;
   slots: TimeSlot[];
-  isToday: boolean;
-  isDisabled: boolean;
 }
 
 const CalendarBoardColumTime = ({
   date,
   slots,
-  isToday,
-  isDisabled,
 }: CalendarBoardColumTimeProps) => {
+  const { isToday } = useCalendarContext();
   return (
     <div
       key={date.toISODate()}
       className={cn(
         'border-r border-gray-200 last:border-r-0 relative ',
-        isToday ? 'bg-blue-50' : '',
-        isDisabled ? 'opacity-50' : ''
+        isToday(date) ? 'bg-blue-50' : ''
       )}
     >
       <div className="absolute inset-0 bg-blue-50/30 pointer-events-none"></div>
@@ -43,11 +40,7 @@ const CalendarBoardColumTime = ({
           </div>
         ))}
       </div>
-      <CalendarBoardColumTimeSlot
-        slots={slots}
-        date={date}
-        isDisabled={isDisabled}
-      />
+      <CalendarBoardColumTimeSlot slots={slots} date={date} />
     </div>
   );
 };

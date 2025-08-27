@@ -1,21 +1,15 @@
 import { DateTime } from 'luxon';
 import { cn } from '../../lib/utils';
+import { useCalendarContext } from '../../contexts/CalendarContext';
 
-const CalendarBoardColumHeader = ({
-  date,
-  isToday,
-  isDisabled,
-}: {
-  date: DateTime;
-  isToday: boolean;
-  isDisabled: boolean;
-}) => {
+const CalendarBoardColumHeader = ({ date }: { date: DateTime }) => {
+  const { isToday, isBeforeToday } = useCalendarContext();
   return (
     <div
       className={cn(
-        'p-1 md:p-3 text-center border-r border-gray-200 last:border-r-0',
-        isToday ? 'bg-blue-50 text-blue-700' : '',
-        isDisabled ? 'opacity-50' : ''
+        'p-1 md:p-2 text-center border-r border-gray-200 last:border-r-0',
+        isToday(date) ? 'bg-blue-50 text-blue-700' : '',
+        isBeforeToday(date) ? 'opacity-50' : ''
       )}
     >
       <div className={`text-sm md:text-base font-medium 'text-gray-700'}`}>

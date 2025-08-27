@@ -2,6 +2,7 @@
 
 import { DateTime } from 'luxon';
 import React, { createContext, useContext, useState } from 'react';
+import { TimeSlot } from '../component/CalendarBoard/CalendarBoardColumTimeSlot';
 
 interface CalendarContextType {
   currentDateTime: DateTime;
@@ -18,6 +19,7 @@ interface CalendarContextType {
   goToPreviousWeek: () => void;
   goToToday: () => void;
   isCurrentWeek: () => boolean;
+  isSlotPassed: (slot: TimeSlot) => boolean;
 }
 
 const CalendarContext = createContext<CalendarContextType | undefined>(
@@ -59,6 +61,9 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({
   const isCurrentWeek = () => {
     return selectedDateTime.hasSame(currentDateTime, 'week');
   };
+  const isSlotPassed = (slot: TimeSlot) => {
+    return slot.startDate < currentDateTime;
+  };
 
   const isToday = (dateTime: DateTime) => {
     return dateTime.hasSame(currentDateTime, 'day');
@@ -93,6 +98,7 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({
     isCurrentWeek,
     isToday,
     isBeforeToday,
+    isSlotPassed,
   };
 
   return (

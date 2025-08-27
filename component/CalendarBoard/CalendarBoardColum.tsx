@@ -7,8 +7,7 @@ import CalendarBoardColumTime from './CalendarBoardColumTime';
 import { TimeSlotTemplate } from './CalendarBoardColumTimeSlot';
 
 const CalendarBoardColum = () => {
-  const { weekDays, isBeforeToday, isToday, startOfEndOfWeek } =
-    useCalendarContext();
+  const { weekDays, startOfEndOfWeek } = useCalendarContext();
 
   const { templates, isSlotBooked, isLoading } = useCalendarData('user1');
   const slots = useMemo(() => {
@@ -56,23 +55,16 @@ const CalendarBoardColum = () => {
   return (
     <div className="bg-white flex-1 flex flex-col">
       <div className="grid grid-cols-7 border-b border-gray-200">
-        {weekDays.map(d => (
-          <CalendarBoardColumHeader
-            key={d.toISODate()}
-            date={d}
-            isToday={isToday(d)}
-            isDisabled={isBeforeToday(d)}
-          />
+        {weekDays.map(date => (
+          <CalendarBoardColumHeader key={date.toISODate()} date={date} />
         ))}
       </div>
       <div className="grid grid-cols-7 flex-1">
-        {weekDays.map(d => (
+        {weekDays.map(date => (
           <CalendarBoardColumTime
-            key={d.toISODate()}
-            date={d}
+            key={date.toISODate()}
+            date={date}
             slots={slots}
-            isToday={isToday(d)}
-            isDisabled={isBeforeToday(d)}
           />
         ))}
       </div>

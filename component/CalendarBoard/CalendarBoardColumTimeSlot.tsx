@@ -61,26 +61,20 @@ const getSlotStyle = (slot: TimeSlot) => {
 interface CalendarBoardColumTimeSlotProps {
   date: DateTime;
   slots: TimeSlot[];
-  isDisabled: boolean;
-  onSlotClick?: (slot: TimeSlot) => void;
 }
 
 const CalendarBoardColumTimeSlot = ({
   date,
   slots,
-  isDisabled,
 }: CalendarBoardColumTimeSlotProps) => {
   const { bookSlot } = useCalendarData('user1');
-  const { currentDateTime } = useCalendarContext();
+  const { isSlotPassed, isBeforeToday } = useCalendarContext();
   const filteredSlots = slots.filter(slot => {
     return slot.date.hasSame(date, 'day');
   });
-  const isSlotPassed = (slot: TimeSlot) => {
-    return slot.startDate < currentDateTime;
-  };
 
   const handleSlotClick = async (slot: TimeSlot) => {
-    if (isDisabled || isSlotPassed(slot)) return;
+    if (isBeforeToday(date) || isSlotPassed(slot)) return;
 
     try {
       const result = await bookSlot(
@@ -106,22 +100,22 @@ const CalendarBoardColumTimeSlot = ({
       style={getSlotStyle(slot)}
       onClick={() => handleSlotClick(slot)}
       className={cn(
-        'border text-sm transition-all duration-200 flex flex-col justify-center  rounded',
+        'border text-sm transition-all duration-200 flex flex-col justify-center rounded',
         slot.isBooked
           ? 'bg-gray-100 border-gray-300 text-gray-500 pointer-events-none'
-          : 'bg-green-100 border-green-200' +
-              (isDisabled
-                ? ' cursor-not-allowed'
+          : 'bg-green-100 border-green-200 ' +
+              (isBeforeToday(slot.startDate)
+                ? ' cursor-not-allowed bg-red-100 text-gray-100'
                 : isSlotPassed(slot)
-                  ? ' cursor-not-allowed opacity-50 bg-red-400/20'
-                  : ' cursor-pointer touch-manipulation active:scale-95')
+                  ? ' cursor-not-allowed bg-red-100 text-gray-100'
+                  : ' cursor-pointer hover:bg-green-200 touch-manipulation active:scale-95')
       )}
     >
-      <div className="text-xs md:text-sm mt-1 opacity-75 text-center">
+      <div className="text-xs md:text-sm text-center md:font-bold text-gray-600">
         <span className="block sm:inline">
           {slot.startDate.toFormat('HH:mm')}
         </span>
-        <span className="block sm:inline">-</span>
+        <span className="hidden md:inline">-</span>
         <span className="block sm:inline">
           {slot.endDate.toFormat('HH:mm')}
         </span>
