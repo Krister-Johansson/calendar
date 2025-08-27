@@ -1,173 +1,84 @@
 import { useMemo } from 'react';
 import { useCalendarContext } from '../../contexts/CalendarContext';
 import { generateSlotsFromTemplates } from '../../lib/templateUtils';
+import { useCalendarData } from '../../hooks/useCalendarData';
 import CalendarBoardColumHeader from './CalendarBoardColumHeader';
 import CalendarBoardColumTime from './CalendarBoardColumTime';
-import { TimeSlotTemplate } from './CalendarBoardColumTimeSlot';
-
-// Example templates matching your JSON structure
-const exampleTemplates: TimeSlotTemplate[] = [
-  // Base template for September-December
-  {
-    id: '771c6e9d-8676-423f-bc8c-55c893f324cc',
-    name: 'Base Week',
-    active: true,
-    startDate: null,
-    endDate: null,
-    createdAt: '2025-08-20T09:00:00Z',
-    weeks: [
-      {
-        days: [
-          {
-            day: 1, // Monday
-            slots: [
-              {
-                id: '171c6e9d-8676-423f-bc8c-55c893f324cc',
-                start: '09:00',
-                end: '12:00',
-              },
-              {
-                id: '271c6e9d-8676-423f-bc8c-55c893f324cc',
-                start: '14:00',
-                end: '17:00',
-              },
-            ],
-          },
-          {
-            day: 2, // Tuesday
-            slots: [
-              {
-                id: '371c6e9d-8676-423f-bc8c-55c893f324cc',
-                start: '10:00',
-                end: '15:00',
-              },
-            ],
-          },
-          {
-            day: 3, // Wednesday
-            slots: [
-              {
-                id: '471c6e9d-8676-423f-bc8c-55c893f324cc',
-                start: '10:00',
-                end: '16:00',
-              },
-            ],
-          },
-          {
-            day: 4, // Thursday
-            slots: [
-              {
-                id: '571c6e9d-8676-423f-bc8c-55c893f324cc',
-                start: '11:00',
-                end: '16:00',
-              },
-            ],
-          },
-          {
-            day: 5, // Friday
-            slots: [
-              {
-                id: '671c6e9d-8676-423f-bc8c-55c893f324cc',
-                start: '09:00',
-                end: '14:00',
-              },
-              {
-                id: '771c6e9d-8676-423f-bc8c-55c893f324cc',
-                start: '15:00',
-                end: '19:00',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        days: [
-          {
-            day: 1, // Monday of week 2
-            slots: [
-              {
-                id: '871c6e9d-8676-423f-bc8c-55c893f324cc',
-                start: '08:00',
-                end: '13:00',
-              },
-            ],
-          },
-          {
-            day: 6, // Wednesday of week 2
-            slots: [
-              {
-                id: '971c6e9d-8676-423f-bc8c-55c893f324cc',
-                start: '14:00',
-                end: '20:00',
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-
-  // Updated template for October (overrides base template)
-  {
-    id: '771c6e9d-8676-423f-bc8c-55c893f324c2',
-    name: 'Updated Mondays',
-    active: true,
-    startDate: '2025-10-01',
-    endDate: '2025-10-31',
-    createdAt: '2025-09-15T10:30:00Z',
-    weeks: [
-      {
-        days: [
-          {
-            day: 3, // Monday (using day name)
-            slots: [
-              { id: '101', start: '08:00', end: '09:00' },
-              { id: '102', start: '09:00', end: '10:00' },
-              { id: '103', start: '10:00', end: '11:00' },
-            ],
-          },
-        ],
-      },
-      {
-        days: [
-          {
-            day: 3, // Monday of second week
-            slots: [{ id: '201', start: '07:00', end: '12:00' }],
-          },
-        ],
-      },
-    ],
-  },
-];
+import { TimeSlotTemplate, TimeSlot } from './CalendarBoardColumTimeSlot';
 
 const CalendarBoardColum = () => {
   const { weekDays, isBeforeToday, isToday, startOfEndOfWeek } =
     useCalendarContext();
 
-  // Test data: Array of booked slot IDs
-  const bookedSlotIds = useMemo(
-    () => [
-      // Book some Monday morning slots for testing
-      'NzcxYzZlOWQtODY3Ni00MjNmLWJjOGMtNTVjODkzZjMyNGNjOjIwMjUtMDgtMjc6NDcxYzZlOWQtODY3Ni00MjNmLWJjOGMtNTVjODkzZjMyNGNj', // Monday 9:00-12:00
-      'NzcxYzZlOWQtODY3Ni00MjNmLWJjOGMtNTVjODkzZjMyNGNjOjIwMjUtMDgtMjk6NzcxYzZlOWQtODY3Ni00MjNmLWJjOGMtNTVjODkzZjMyNGNj', // Tuesday 10:00-15:00
-    ],
-    []
-  );
-
-  // Generate slots from templates for the current week
+  const { templates, isSlotBooked, bookSlot, isLoading } =
+    useCalendarData('user1');
   const slots = useMemo(() => {
+    if (isLoading || !templates || templates.length === 0) {
+      return [];
+    }
+
     const generatedSlots = generateSlotsFromTemplates(
-      exampleTemplates,
+      templates as TimeSlotTemplate[],
       startOfEndOfWeek.startOfWeek,
       startOfEndOfWeek.endOfWeek
     );
 
-    // Mark slots as booked based on bookedSlotIds
+    // Mark slots as booked based on Convex data
     return generatedSlots.map(slot => ({
       ...slot,
-      isBooked: bookedSlotIds.includes(slot.id),
+      isBooked: isSlotBooked(slot.id),
     }));
-  }, [startOfEndOfWeek.startOfWeek, startOfEndOfWeek.endOfWeek, bookedSlotIds]);
+  }, [
+    templates,
+    startOfEndOfWeek.startOfWeek,
+    startOfEndOfWeek.endOfWeek,
+    isSlotBooked,
+    isLoading,
+  ]);
+
+  // Handle slot clicks for booking
+  const handleSlotClick = async (slot: TimeSlot) => {
+    if (slot.isBooked) {
+      // Slot is already booked - could implement cancellation here
+      console.log('Slot is already booked:', slot.id);
+      return;
+    }
+
+    try {
+      const result = await bookSlot(
+        slot.templateId,
+        slot.id,
+        slot.date.toFormat('yyyy-MM-dd')
+      );
+
+      if (result.success) {
+        console.log('Slot booked successfully!');
+        // The UI will automatically update due to Convex reactivity
+      } else {
+        console.error('Failed to book slot:', result.error);
+      }
+    } catch (error) {
+      console.error('Error booking slot:', error);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="bg-white flex-1 flex items-center justify-center">
+        <div className="text-gray-500">Loading calendar...</div>
+      </div>
+    );
+  }
+
+  if (!templates || templates.length === 0) {
+    return (
+      <div className="bg-white flex-1 flex items-center justify-center">
+        <div className="text-gray-500">
+          No templates found. Create some templates to get started.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white flex-1 flex flex-col overflow-hidden">
@@ -189,6 +100,7 @@ const CalendarBoardColum = () => {
             slots={slots}
             isToday={isToday(d)}
             isDisabled={isBeforeToday(d)}
+            onSlotClick={handleSlotClick}
           />
         ))}
       </div>

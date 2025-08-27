@@ -65,12 +65,14 @@ interface CalendarBoardColumTimeSlotProps {
   date: DateTime;
   slots: TimeSlot[];
   isDisabled: boolean;
+  onSlotClick?: (slot: TimeSlot) => void;
 }
 
 const CalendarBoardColumTimeSlot = ({
   date,
   slots,
   isDisabled,
+  onSlotClick,
 }: CalendarBoardColumTimeSlotProps) => {
   const filteredSlots = slots.filter(slot => {
     return slot.date.hasSame(date, 'day');
@@ -93,6 +95,11 @@ const CalendarBoardColumTimeSlot = ({
         'slotId is the stable anchorId - use this for booking tracking',
       decodedAnchorId: atob(slot.id), // Show the decoded format
     });
+
+    // Call the parent click handler for booking logic
+    if (onSlotClick) {
+      onSlotClick(slot);
+    }
   };
 
   return filteredSlots.map(slot => (

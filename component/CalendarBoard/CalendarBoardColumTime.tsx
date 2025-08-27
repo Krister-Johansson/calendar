@@ -9,6 +9,7 @@ interface CalendarBoardColumTimeProps {
   slots: TimeSlot[];
   isToday: boolean;
   isDisabled: boolean;
+  onSlotClick?: (slot: TimeSlot) => void;
 }
 
 const CalendarBoardColumTime = ({
@@ -16,6 +17,7 @@ const CalendarBoardColumTime = ({
   slots,
   isToday,
   isDisabled,
+  onSlotClick,
 }: CalendarBoardColumTimeProps) => {
   return (
     <div
@@ -47,6 +49,7 @@ const CalendarBoardColumTime = ({
         slots={slots}
         date={date}
         isDisabled={isDisabled}
+        onSlotClick={onSlotClick}
       />
     </div>
   );

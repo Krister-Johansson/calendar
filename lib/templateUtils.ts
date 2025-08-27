@@ -246,19 +246,6 @@ export const generateSlotsFromTemplates = (
   return slots;
 };
 
-/**
- * Checks if a specific slot is booked
- */
-export const isSlotBooked = (
-  slotId: string,
-  bookedSlotIds: string[]
-): boolean => {
-  return bookedSlotIds.includes(slotId);
-};
-
-/**
- * Creates a template from the JSON structure
- */
 export const createTemplateFromJSON = (
   templateData: TimeSlotTemplate
 ): TimeSlotTemplate => {
