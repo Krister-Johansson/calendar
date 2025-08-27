@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import { DateTime } from 'luxon';
 import { useCalendarContext } from '../../contexts/CalendarContext';
+import { useCalendarData } from '../../hooks/useCalendarData';
 
 export type SlotPattern = {
   id: string; // Unique identifier for this slot pattern
@@ -48,17 +49,12 @@ const getSlotStyle = (slot: TimeSlot) => {
     ((endMinutesFromMidnight - startMinutesFromMidnight) / totalMinutesInDay) *
     100;
 
-  // Add a small gap between slots by reducing height slightly
-  const gapPercent = 0.5; // 0.5% gap between slots
-  const adjustedHeightPercent = Math.max(0, heightPercent - gapPercent);
-
   return {
     position: 'absolute' as const,
     top: `${topPercent}%`,
-    height: `${adjustedHeightPercent}%`,
+    height: `${heightPercent}%`,
     left: '4px',
     right: '4px',
-    marginBottom: `${gapPercent}%`,
   };
 };
 
@@ -73,8 +69,8 @@ const CalendarBoardColumTimeSlot = ({
   date,
   slots,
   isDisabled,
-  onSlotClick,
 }: CalendarBoardColumTimeSlotProps) => {
+  const { bookSlot } = useCalendarData('user1');
   const { currentDateTime } = useCalendarContext();
   const filteredSlots = slots.filter(slot => {
     return slot.date.hasSame(date, 'day');
@@ -83,11 +79,24 @@ const CalendarBoardColumTimeSlot = ({
     return slot.startDate < currentDateTime;
   };
 
-  const handleSlotClick = (slot: TimeSlot) => {
+  const handleSlotClick = async (slot: TimeSlot) => {
     if (isDisabled || isSlotPassed(slot)) return;
 
-    if (onSlotClick) {
-      onSlotClick(slot);
+    try {
+      const result = await bookSlot(
+        slot.templateId,
+        slot.id,
+        slot.date.toFormat('yyyy-MM-dd')
+      );
+
+      if (result.success) {
+        console.log('Slot booked successfully!');
+        // The UI will automatically update due to Convex reactivity
+      } else {
+        console.error('Failed to book slot:', result.error);
+      }
+    } catch (error) {
+      console.error('Error booking slot:', error);
     }
   };
 
@@ -97,7 +106,7 @@ const CalendarBoardColumTimeSlot = ({
       style={getSlotStyle(slot)}
       onClick={() => handleSlotClick(slot)}
       className={cn(
-        'p-2 md:p-3 border text-sm transition-all duration-200 flex flex-col justify-center overflow-hidden rounded font-bold',
+        'border text-sm transition-all duration-200 flex flex-col justify-center  rounded',
         slot.isBooked
           ? 'bg-gray-100 border-gray-300 text-gray-500 pointer-events-none'
           : 'bg-green-100 border-green-200' +

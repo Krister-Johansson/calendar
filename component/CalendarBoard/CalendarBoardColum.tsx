@@ -1,17 +1,16 @@
 import { useMemo } from 'react';
 import { useCalendarContext } from '../../contexts/CalendarContext';
-import { generateSlotsFromTemplates } from '../../lib/templateUtils';
 import { useCalendarData } from '../../hooks/useCalendarData';
+import { generateSlotsFromTemplates } from '../../lib/templateUtils';
 import CalendarBoardColumHeader from './CalendarBoardColumHeader';
 import CalendarBoardColumTime from './CalendarBoardColumTime';
-import { TimeSlotTemplate, TimeSlot } from './CalendarBoardColumTimeSlot';
+import { TimeSlotTemplate } from './CalendarBoardColumTimeSlot';
 
 const CalendarBoardColum = () => {
   const { weekDays, isBeforeToday, isToday, startOfEndOfWeek } =
     useCalendarContext();
 
-  const { templates, isSlotBooked, bookSlot, isLoading } =
-    useCalendarData('user1');
+  const { templates, isSlotBooked, isLoading } = useCalendarData('user1');
   const slots = useMemo(() => {
     if (isLoading || !templates || templates.length === 0) {
       return [];
@@ -35,32 +34,6 @@ const CalendarBoardColum = () => {
     isSlotBooked,
     isLoading,
   ]);
-
-  // Handle slot clicks for booking
-  const handleSlotClick = async (slot: TimeSlot) => {
-    if (slot.isBooked) {
-      // Slot is already booked - could implement cancellation here
-      console.log('Slot is already booked:', slot.id);
-      return;
-    }
-
-    try {
-      const result = await bookSlot(
-        slot.templateId,
-        slot.id,
-        slot.date.toFormat('yyyy-MM-dd')
-      );
-
-      if (result.success) {
-        console.log('Slot booked successfully!');
-        // The UI will automatically update due to Convex reactivity
-      } else {
-        console.error('Failed to book slot:', result.error);
-      }
-    } catch (error) {
-      console.error('Error booking slot:', error);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -92,7 +65,7 @@ const CalendarBoardColum = () => {
           />
         ))}
       </div>
-      <div className="grid grid-cols-7 flex-1 min-h-[400px] md:min-h-[500px]">
+      <div className="grid grid-cols-7 flex-1">
         {weekDays.map(d => (
           <CalendarBoardColumTime
             key={d.toISODate()}
@@ -100,7 +73,6 @@ const CalendarBoardColum = () => {
             slots={slots}
             isToday={isToday(d)}
             isDisabled={isBeforeToday(d)}
-            onSlotClick={handleSlotClick}
           />
         ))}
       </div>

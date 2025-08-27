@@ -9,7 +9,7 @@ export default function Home() {
   console.log(currentDateTime);
   return (
     <CalendarProvider currentDateTime={currentDateTime}>
-      <div className="min-h-screen bg-gray-50">
+      <div className="h-screen bg-gray-50 flex flex-col">
         <CalendarBoard />
       </div>
     </CalendarProvider>
