@@ -322,6 +322,7 @@ export const explainStableAnchorId = (
       pattern: `Template ${templateId}, Date ${date}, Slot ${slotId}`,
     };
   } catch (error) {
+    console.error(error);
     return {
       templateId: 'Invalid',
       date: 'Invalid',

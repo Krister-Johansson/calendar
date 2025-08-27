@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon';
+import { cn } from '../../lib/utils';
 import CalendarBoardColumTimeSlot, {
   type TimeSlot,
 } from './CalendarBoardColumTimeSlot';
-import { cn } from '../../lib/utils';
 
 interface CalendarBoardColumTimeProps {
   date: DateTime;
@@ -38,7 +38,7 @@ const CalendarBoardColumTime = ({
             style={{ top: `${(hour / 24) * 100}%` }}
           >
             {hour % 6 === 0 && (
-              <span className="text-xs text-gray-400 ml-1 hidden md:inline">
+              <span className="text-xs text-gray-400 ml-1 md:inline">
                 {hour.toString().padStart(2, '0')}:00
               </span>
             )}

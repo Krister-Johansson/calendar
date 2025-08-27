@@ -13,13 +13,13 @@ const CalendarBoardColumHeader = ({
   return (
     <div
       className={cn(
-        'p-2 md:p-3 text-center border-r border-gray-200 last:border-r-0',
+        'p-1 md:p-3 text-center border-r border-gray-200 last:border-r-0',
         isToday ? 'bg-blue-50 text-blue-700' : '',
         isDisabled ? 'opacity-50' : ''
       )}
     >
       <div className={`text-sm md:text-base font-medium 'text-gray-700'}`}>
-        <span className="sm:hidden">A1</span>
+        <span className="sm:hidden">{date.toFormat('EEE')}</span>
         <span className="hidden sm:inline">{date.toFormat('EEEE')}</span>
       </div>
       <div

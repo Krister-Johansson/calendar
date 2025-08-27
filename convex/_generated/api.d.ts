@@ -14,7 +14,6 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as calendar from "../calendar.js";
-import type * as seed from "../seed.js";
 import type * as test from "../test.js";
 
 /**
@@ -27,7 +26,6 @@ import type * as test from "../test.js";
  */
 declare const fullApi: ApiFromModules<{
   calendar: typeof calendar;
-  seed: typeof seed;
   test: typeof test;
 }>;
 export declare const api: FilterApi<

@@ -81,7 +81,7 @@ const CalendarBoardColum = () => {
   }
 
   return (
-    <div className="bg-white flex-1 flex flex-col overflow-hidden">
+    <div className="bg-white flex-1 flex flex-col">
       <div className="grid grid-cols-7 border-b border-gray-200">
         {weekDays.map(d => (
           <CalendarBoardColumHeader
